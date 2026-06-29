@@ -84,8 +84,22 @@ export const productsApi = baseApi.injectEndpoints({
       query: (id) => ({ url: `/products/${id}` }),
       providesTags: (_result, _err, id) => [{ type: 'Products', id }],
     }),
+    getProductRecommendations: build.query<Product[], string>({
+      query: (id) => ({ url: `/products/${id}/recommendations` }),
+      providesTags: (result, _err, id) =>
+        result
+          ? [
+              ...result.map((p) => ({ type: 'Products' as const, id: p.id })),
+              { type: 'Products' as const, id: `RECS-${id}` },
+            ]
+          : [{ type: 'Products' as const, id: `RECS-${id}` }],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetProductsQuery, useGetProductQuery } = productsApi;
+export const {
+  useGetProductsQuery,
+  useGetProductQuery,
+  useGetProductRecommendationsQuery,
+} = productsApi;

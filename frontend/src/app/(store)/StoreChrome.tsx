@@ -12,6 +12,7 @@ import Footer from '@/components/Footer';
 import { useAppDispatch } from '@/store/hooks';
 import { useAuth } from '@/store/useAuth';
 import { logout } from '@/store/authSlice';
+import { useGetCartQuery } from '@/store/cartApi';
 
 /**
  * Client chrome for the storefront group: sticky Navbar above, Footer below.
@@ -25,6 +26,10 @@ export default function StoreChrome({ children }: { children: React.ReactNode })
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { isAuthenticated, user } = useAuth();
+
+  // Cart is per-user and bearer-guarded; only query when authenticated.
+  const { data: cart } = useGetCartQuery(undefined, { skip: !isAuthenticated });
+  const cartCount = cart?.items.reduce((sum, item) => sum + item.qty, 0) ?? 0;
 
   const [menuOpen, setMenuOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement | null>(null);
@@ -61,7 +66,7 @@ export default function StoreChrome({ children }: { children: React.ReactNode })
         sx={{ position: 'fixed', top: 64, right: 32, width: 0, height: 0, zIndex: 39 }}
       />
       <Navbar
-        cartCount={0}
+        cartCount={cartCount}
         accountLabel={isAuthenticated ? `Hi, ${firstName}` : 'Account'}
         primaryLinks={[
           { label: 'Shop', href: '/' },

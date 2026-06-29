@@ -28,6 +28,7 @@ export {
   productsApi,
   useGetProductsQuery,
   useGetProductQuery,
+  useGetProductRecommendationsQuery,
   PRODUCT_CATEGORIES,
 } from './productsApi';
 export type {
@@ -37,6 +38,20 @@ export type {
   GetProductsParams,
   Paginated,
 } from './productsApi';
+export {
+  cartApi,
+  useGetCartQuery,
+  useAddItemMutation,
+  useUpdateItemMutation,
+  useRemoveItemMutation,
+  useClearCartMutation,
+} from './cartApi';
+export type {
+  Cart,
+  CartItem,
+  AddItemBody,
+  UpdateItemArg,
+} from './cartApi';
 export type {
   AuthUser,
   UserRole,
