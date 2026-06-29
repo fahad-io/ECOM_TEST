@@ -26,6 +26,11 @@ export interface DashboardSalesPoint {
   total: number;
 }
 
+export interface DashboardCategoryPoint {
+  category: string;
+  count: number;
+}
+
 export interface Dashboard {
   totalSales: number;
   orderCount: number;
@@ -34,6 +39,7 @@ export interface Dashboard {
   ordersByStatus: DashboardOrdersByStatus[];
   topProducts: DashboardTopProduct[];
   salesOverTime: DashboardSalesPoint[];
+  productsByCategory: DashboardCategoryPoint[];
 }
 
 /** A row in the admin customers list (`GET /admin/customers`). */

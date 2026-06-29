@@ -11,6 +11,7 @@ import { normalizeApiError } from '@/store/normalizeError';
 import { ORDER_STATUS, emerald, storefront } from '@/theme/tokens';
 import { money, mono } from '@/theme/format';
 import type {
+  DashboardCategoryPoint,
   DashboardOrdersByStatus,
   DashboardSalesPoint,
   DashboardTopProduct,
@@ -248,6 +249,51 @@ function TopProducts({ data }: { data: DashboardTopProduct[] }) {
   );
 }
 
+/** "Products by category": a horizontal bar per category (count of products). */
+function ProductsByCategory({ data }: { data: DashboardCategoryPoint[] }) {
+  const max = Math.max(1, ...data.map((d) => d.count));
+  const total = data.reduce((sum, d) => sum + d.count, 0);
+  return (
+    <Box sx={{ ...CARD_SX, p: '24px' }}>
+      <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', mb: '20px' }}>
+        <Typography sx={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Products by category</Typography>
+        <Typography sx={{ fontSize: 13, color: '#9CA3AF', fontWeight: 500 }}>{total} total</Typography>
+      </Box>
+      {total === 0 ? (
+        <Typography sx={{ fontSize: 13.5, color: '#9CA3AF', py: '24px', textAlign: 'center' }}>
+          No products yet.
+        </Typography>
+      ) : (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          {data.map((d) => (
+            <Box key={d.category}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: '7px', fontSize: 13.5 }}>
+                <Box component="span" sx={{ color: '#374151', fontWeight: 500 }}>{d.category}</Box>
+                <Box component="span" sx={{ color: '#111827', fontWeight: 700 }}>{d.count}</Box>
+              </Box>
+              <Box
+                role="img"
+                aria-label={`${d.category}: ${d.count} product${d.count === 1 ? '' : 's'}`}
+                sx={{ height: 9, borderRadius: '99px', bgcolor: '#F1F1EF', overflow: 'hidden' }}
+              >
+                <Box
+                  sx={{
+                    height: '100%',
+                    borderRadius: '99px',
+                    bgcolor: emerald.main,
+                    width: `${Math.max(2, Math.round((d.count / max) * 100))}%`,
+                    transition: 'width .5s ease',
+                  }}
+                />
+              </Box>
+            </Box>
+          ))}
+        </Box>
+      )}
+    </Box>
+  );
+}
+
 function DashboardSkeleton() {
   return (
     <Box>
@@ -324,7 +370,16 @@ export default function DashboardScreen() {
         <StatusBreakdown data={data.ordersByStatus} />
       </Box>
 
-      <TopProducts data={data.topProducts} />
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: '1.6fr 1fr' },
+          gap: '18px',
+        }}
+      >
+        <TopProducts data={data.topProducts} />
+        <ProductsByCategory data={data.productsByCategory} />
+      </Box>
     </Box>
   );
 }
