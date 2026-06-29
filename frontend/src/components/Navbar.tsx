@@ -104,7 +104,13 @@ export default function Navbar({
           <Link
             onClick={onLogoClick}
             aria-label="MARL home"
-            sx={{ flex: '0 0 auto', textAlign: 'center' }}
+            sx={{
+              flex: '0 0 auto',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'opacity .15s ease',
+              '&:hover': { opacity: 0.7 },
+            }}
           >
             <Logo size={24} />
           </Link>

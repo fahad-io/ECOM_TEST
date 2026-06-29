@@ -65,7 +65,7 @@ export default function StoreChrome({ children }: { children: React.ReactNode })
       <Navbar
         cartCount={cartCount}
         accountLabel={isAuthenticated ? `Hi, ${firstName}` : 'Account'}
-        primaryLinks={[{ label: 'Shop', href: '/' }]}
+        primaryLinks={[]}
         onLogoClick={() => router.push('/')}
         onOrders={handleOrders}
         onAccount={handleAccount}
