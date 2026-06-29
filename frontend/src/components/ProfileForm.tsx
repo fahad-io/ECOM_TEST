@@ -42,7 +42,22 @@ const schema: yup.ObjectSchema<FormValues> = yup.object({
 });
 
 const labelSx = { fontSize: 13, color: '#6B7280', mb: '6px', fontWeight: 500 } as const;
-const fieldSx = { '& .MuiOutlinedInput-input': { color: '#111827' } } as const;
+
+// Force a light field regardless of theme — this form renders on a white card
+// in both the storefront (light theme) and the admin (dark theme) console.
+const fieldSx = {
+  '& .MuiOutlinedInput-root': {
+    borderRadius: '10px',
+    bgcolor: '#fff',
+    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E5E7EB' },
+    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#D1D5DB' },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#111827' },
+    '&.Mui-disabled': { bgcolor: '#F9FAFB' },
+  },
+  '& .MuiOutlinedInput-input': { color: '#111827' },
+  '& .MuiOutlinedInput-input::placeholder': { color: '#9CA3AF', opacity: 1 },
+  '& .MuiOutlinedInput-input.Mui-disabled': { WebkitTextFillColor: '#6B7280' },
+} as const;
 
 /**
  * Shared profile editor (customer + admin): change display name, profile
