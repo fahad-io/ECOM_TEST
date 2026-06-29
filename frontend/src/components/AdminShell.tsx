@@ -80,7 +80,7 @@ export default function AdminShell({
             return (
               <Box
                 key={item.key}
-                component={item.href ? Link : 'button'}
+                component={item.href ? NextLink : 'button'}
                 href={item.href}
                 onClick={item.onClick}
                 aria-current={active ? 'page' : undefined}
