@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { makeStore, type AppStore } from './store';
+import AuthHydrator from './AuthHydrator';
 
 /**
  * Client-side Redux provider. Creates the store once per browser session via a
@@ -18,5 +19,10 @@ export default function StoreProvider({
   if (!storeRef.current) {
     storeRef.current = makeStore();
   }
-  return <Provider store={storeRef.current}>{children}</Provider>;
+  return (
+    <Provider store={storeRef.current}>
+      <AuthHydrator />
+      {children}
+    </Provider>
+  );
 }

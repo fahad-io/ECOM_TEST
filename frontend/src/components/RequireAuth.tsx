@@ -33,12 +33,15 @@ export default function RequireAuth({
 }: RequireAuthProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin, hydrated } = useAuth();
 
-  const allowed = admin ? isAdmin : isAuthenticated;
+  // Only "allowed" once auth has rehydrated — so SSR/first-render shows the
+  // spinner on both sides (no mismatch) and we never redirect a logged-in user
+  // before their token is loaded from localStorage.
+  const allowed = hydrated && (admin ? isAdmin : isAuthenticated);
 
   React.useEffect(() => {
-    if (allowed) return;
+    if (!hydrated || allowed) return; // wait for rehydration before deciding
     if (!isAuthenticated) {
       const target = admin ? adminRedirectTo : redirectTo;
       const from = encodeURIComponent(pathname || '/');
@@ -49,7 +52,7 @@ export default function RequireAuth({
     if (admin && !isAdmin) {
       router.replace(adminRedirectTo);
     }
-  }, [allowed, isAuthenticated, isAdmin, admin, redirectTo, adminRedirectTo, pathname, router]);
+  }, [hydrated, allowed, isAuthenticated, isAdmin, admin, redirectTo, adminRedirectTo, pathname, router]);
 
   if (!allowed) {
     return (

@@ -126,39 +126,36 @@ export default function CheckoutScreen() {
     );
   }
 
-  // Real Stripe path: a clientSecret is present → mount Elements so the inner
-  // form can use `useStripe`/`useElements`. Otherwise render the form bare and
-  // take the mock path on submit.
+  // Always mount the form inside <Elements> so the Stripe hooks are valid even
+  // during the loading window and on the mock path (useStripe() throws if called
+  // outside a provider). When a real clientSecret is present we pass it so the
+  // PaymentElement renders; the `key` forces a clean remount when it arrives.
   const hasStripe = Boolean(intent && !intent.mock && intent.clientSecret);
-
-  const form = (
-    <CheckoutForm cart={cart!} intent={intent} intentError={intentError} hasStripe={hasStripe} />
-  );
+  const elementsOptions = intent?.clientSecret
+    ? {
+        clientSecret: intent.clientSecret,
+        appearance: {
+          theme: 'stripe' as const,
+          variables: {
+            colorPrimary: emerald.main,
+            colorText: storefront.ink,
+            borderRadius: `${radii.sm}px`,
+            fontFamily: 'inherit',
+          },
+        },
+      }
+    : undefined;
 
   return (
     <Section>
       <Heading />
-      {hasStripe && intent?.clientSecret ? (
-        <Elements
-          stripe={stripePromise}
-          options={{
-            clientSecret: intent.clientSecret,
-            appearance: {
-              theme: 'stripe',
-              variables: {
-                colorPrimary: emerald.main,
-                colorText: storefront.ink,
-                borderRadius: `${radii.sm}px`,
-                fontFamily: 'inherit',
-              },
-            },
-          }}
-        >
-          {form}
-        </Elements>
-      ) : (
-        form
-      )}
+      <Elements
+        key={intent?.clientSecret ?? 'no-secret'}
+        stripe={stripePromise}
+        options={elementsOptions}
+      >
+        <CheckoutForm cart={cart!} intent={intent} intentError={intentError} hasStripe={hasStripe} />
+      </Elements>
     </Section>
   );
 }

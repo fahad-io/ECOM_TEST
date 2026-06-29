@@ -20,7 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={hankenGrotesk.variable}>
-      <body>
+      {/* suppressHydrationWarning: browser extensions (e.g. ColorZilla) inject
+          attributes like cz-shortcut-listen on <body> before React hydrates. */}
+      <body suppressHydrationWarning>
         <StoreProvider>{children}</StoreProvider>
       </body>
     </html>

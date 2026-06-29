@@ -8,6 +8,8 @@ export interface UseAuthResult {
   token: string | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  /** True once auth has been rehydrated from localStorage (client-side). */
+  hydrated: boolean;
 }
 
 /**
@@ -18,10 +20,12 @@ export interface UseAuthResult {
 export function useAuth(): UseAuthResult {
   const token = useAppSelector((s) => s.auth.token);
   const user = useAppSelector((s) => s.auth.user);
+  const hydrated = useAppSelector((s) => s.auth.hydrated);
   return {
     user,
     token,
     isAuthenticated: Boolean(token),
     isAdmin: Boolean(token) && user?.role === 'admin',
+    hydrated,
   };
 }
