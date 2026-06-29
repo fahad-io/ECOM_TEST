@@ -16,6 +16,7 @@ import { useGetProductsQuery, type Product } from '@/store/productsApi';
 import { useDeleteProductMutation } from '@/store/adminApi';
 import { normalizeApiError } from '@/store/normalizeError';
 import { money, mono, stockColor } from '@/theme/format';
+import { productImageUrl } from '@/lib/imageUrl';
 
 const GRID = '2.4fr 1.2fr 1fr 1fr 0.9fr';
 const LOW_STOCK_THRESHOLD = 5;
@@ -166,9 +167,19 @@ export default function ProductsScreen() {
                       fontSize: 12,
                       fontWeight: 800,
                       color: 'rgba(17,24,39,.35)',
+                      overflow: 'hidden',
                     }}
                   >
-                    {mono(p.name)}
+                    {productImageUrl(p.imagePath) ? (
+                      <Box
+                        component="img"
+                        src={productImageUrl(p.imagePath)}
+                        alt=""
+                        sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      mono(p.name)
+                    )}
                   </Box>
                   <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#111827' }} noWrap>
                     {p.name}

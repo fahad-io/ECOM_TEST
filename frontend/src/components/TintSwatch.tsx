@@ -10,6 +10,8 @@ export interface TintSwatchProps {
   mono?: string;
   /** Hex tint background. Falls back to the design's default warm grey. */
   tint?: string | null;
+  /** Product image URL. When set, fills the swatch (tint shows as fallback). */
+  imageSrc?: string | null;
   /** CSS aspect-ratio, e.g. "3 / 4" (card) or "4 / 3" (detail hero). */
   ratio?: string;
   /** Monogram font size in px. */
@@ -29,6 +31,7 @@ export default function TintSwatch({
   name,
   mono,
   tint,
+  imageSrc,
   ratio = '3 / 4',
   monoSize = 64,
   borderRadius = radii.md,
@@ -50,18 +53,36 @@ export default function TintSwatch({
         ...sx,
       }}
     >
-      <Box
-        component="span"
-        aria-hidden
-        sx={{
-          fontSize: monoSize,
-          fontWeight: 800,
-          letterSpacing: '0.04em',
-          color: 'rgba(17,24,39,.10)',
-        }}
-      >
-        {initials}
-      </Box>
+      {imageSrc ? (
+        // Real product image fills the swatch; the tint stays as the backdrop
+        // so a slow/failed load still looks intentional.
+        <Box
+          component="img"
+          src={imageSrc}
+          alt={name ?? ''}
+          loading="lazy"
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+      ) : (
+        <Box
+          component="span"
+          aria-hidden
+          sx={{
+            fontSize: monoSize,
+            fontWeight: 800,
+            letterSpacing: '0.04em',
+            color: 'rgba(17,24,39,.10)',
+          }}
+        >
+          {initials}
+        </Box>
+      )}
       {children}
     </Box>
   );

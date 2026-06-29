@@ -46,6 +46,7 @@ export default function FeaturedCarousel({ products, onOpen }: FeaturedCarouselP
                 stock: p.stock,
                 isNew: p.isNew,
                 tint: p.tint,
+                imagePath: p.imagePath,
               }}
               onOpen={onOpen}
             />

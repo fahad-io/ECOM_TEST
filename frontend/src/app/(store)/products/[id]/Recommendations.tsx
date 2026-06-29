@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 import 'swiper/css';
 import TintSwatch from '@/components/TintSwatch';
+import { productImageUrl } from '@/lib/imageUrl';
 import { money } from '@/theme/format';
 import type { Product } from '@/store/productsApi';
 
@@ -53,7 +54,13 @@ export default function Recommendations({ products, onOpen }: RecommendationsPro
               '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main' },
             }}
           >
-            <TintSwatch name={p.name} tint={p.tint} monoSize={48} sx={{ mb: '12px' }} />
+            <TintSwatch
+              name={p.name}
+              tint={p.tint}
+              imageSrc={productImageUrl(p.imagePath)}
+              monoSize={48}
+              sx={{ mb: '12px' }}
+            />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: '8px' }}>
               <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{p.name}</Typography>
               <Typography sx={{ fontSize: 14, fontWeight: 700 }}>{money(p.price)}</Typography>

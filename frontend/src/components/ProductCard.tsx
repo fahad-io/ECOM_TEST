@@ -6,6 +6,7 @@ import TintSwatch from './TintSwatch';
 import NewBadge from './NewBadge';
 import StockLabel from './StockLabel';
 import PriceTag from './PriceTag';
+import { productImageUrl } from '@/lib/imageUrl';
 
 export interface ProductCardProduct {
   id: string;
@@ -15,6 +16,7 @@ export interface ProductCardProduct {
   stock: number;
   isNew?: boolean;
   tint?: string | null;
+  imagePath?: string | null;
 }
 
 export interface ProductCardProps {
@@ -56,7 +58,12 @@ export default function ProductCard({ product, onOpen, hideStock }: ProductCardP
         '&:focus-visible': { outline: `2px solid`, outlineColor: 'primary.main' },
       }}
     >
-      <TintSwatch name={product.name} tint={product.tint} sx={{ mb: '13px' }}>
+      <TintSwatch
+        name={product.name}
+        tint={product.tint}
+        imageSrc={productImageUrl(product.imagePath)}
+        sx={{ mb: '13px' }}
+      >
         {product.isNew && (
           <NewBadge sx={{ position: 'absolute', top: 12, left: 12 }} />
         )}

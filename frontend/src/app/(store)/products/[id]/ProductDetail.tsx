@@ -19,6 +19,7 @@ import { normalizeApiError } from '@/store/normalizeError';
 import TintSwatch from '@/components/TintSwatch';
 import StockLabel from '@/components/StockLabel';
 import QuantityStepper from '@/components/QuantityStepper';
+import { productImageUrl } from '@/lib/imageUrl';
 import { money, mono } from '@/theme/format';
 import { radii } from '@/theme/tokens';
 import Recommendations from './Recommendations';
@@ -134,6 +135,7 @@ export default function ProductDetail({ id }: { id: string }) {
           <TintSwatch
             name={product.name}
             tint={product.tint}
+            imageSrc={productImageUrl(product.imagePath)}
             ratio="4 / 3"
             monoSize={120}
             borderRadius={radii.xl}

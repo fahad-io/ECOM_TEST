@@ -275,6 +275,7 @@ export default function Catalog() {
                         stock: p.stock,
                         isNew: p.isNew,
                         tint: p.tint,
+                        imagePath: p.imagePath,
                       }}
                       onOpen={open}
                     />

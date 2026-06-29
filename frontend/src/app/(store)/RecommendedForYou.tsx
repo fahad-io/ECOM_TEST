@@ -79,6 +79,7 @@ export default function RecommendedForYou({ onOpen }: RecommendedForYouProps) {
                   stock: p.stock,
                   isNew: p.isNew,
                   tint: p.tint,
+                  imagePath: p.imagePath,
                 }}
                 onOpen={onOpen}
               />

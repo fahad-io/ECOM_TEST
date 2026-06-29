@@ -19,11 +19,8 @@ import {
 } from '@/store/adminApi';
 import { PRODUCT_CATEGORIES, type Product } from '@/store/productsApi';
 import { normalizeApiError } from '@/store/normalizeError';
+import { productImageUrl } from '@/lib/imageUrl';
 import { mono } from '@/theme/format';
-
-/** Origin that serves uploaded images (API base minus the `/api` suffix). */
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api';
-const UPLOAD_ORIGIN = API_URL.replace(/\/api\/?$/, '');
 
 interface FormValues {
   name: string;
@@ -90,7 +87,7 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [serverError, setServerError] = React.useState<string | null>(null);
   const [imageFile, setImageFile] = React.useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(
-    product?.imagePath ? `${UPLOAD_ORIGIN}${product.imagePath}` : null,
+    productImageUrl(product?.imagePath) ?? null,
   );
   const [dragOver, setDragOver] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
