@@ -12,6 +12,7 @@ import { CartModule } from './modules/cart/cart.module';
 import { CheckoutModule } from './modules/checkout/checkout.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { ProductsModule } from './modules/products/products.module';
+import { RecommendationsModule } from './modules/recommendations/recommendations.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
@@ -33,6 +34,7 @@ import { UsersModule } from './modules/users/users.module';
     OrdersModule,
     CheckoutModule,
     AdminModule,
+    RecommendationsModule,
   ],
   controllers: [AppController],
   providers: [

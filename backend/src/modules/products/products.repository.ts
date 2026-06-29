@@ -76,6 +76,25 @@ export class ProductsRepository {
       .exec();
   }
 
+  /** Newest products, optionally excluding some ids (for recommendations). */
+  findNewest(limit: number, excludeIds: string[] = []): Promise<ProductDocument[]> {
+    const filter = excludeIds.length ? { _id: { $nin: excludeIds } } : {};
+    return this.model.find(filter).sort({ createdAt: -1 }).limit(limit).exec();
+  }
+
+  /** Products in any of the given categories, excluding some ids. */
+  findByCategories(
+    categories: string[],
+    excludeIds: string[],
+    limit: number,
+  ): Promise<ProductDocument[]> {
+    return this.model
+      .find({ category: { $in: categories }, _id: { $nin: excludeIds } })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .exec();
+  }
+
   /**
    * Atomically decrements stock only if at least `qty` is available. Returns
    * true if the decrement happened. The {stock: {$gte: qty}} guard makes this a
