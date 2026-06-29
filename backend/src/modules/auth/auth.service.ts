@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Role } from '../../common/enums/role.enum';
 import { UserDocument } from '../users/schemas/user.schema';
+import { PublicUser, toPublicUser } from '../users/user.mapper';
 import { UsersRepository } from '../users/users.repository';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
@@ -15,7 +16,7 @@ const BCRYPT_ROUNDS = 10;
 
 export interface AuthResult {
   accessToken: string;
-  user: { id: string; name: string; email: string; role: Role };
+  user: PublicUser;
 }
 
 @Injectable()
@@ -54,7 +55,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException();
     }
-    return this.toPublic(user);
+    return toPublicUser(user);
   }
 
   private buildResult(user: UserDocument): AuthResult {
@@ -65,15 +66,6 @@ export class AuthService {
     };
     // Secret + expiry come from JwtModule.registerAsync.
     const accessToken = this.jwt.sign(payload);
-    return { accessToken, user: this.toPublic(user) };
-  }
-
-  private toPublic(user: UserDocument) {
-    return {
-      id: user.id as string,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    };
+    return { accessToken, user: toPublicUser(user) };
   }
 }

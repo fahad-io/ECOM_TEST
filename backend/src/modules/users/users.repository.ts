@@ -37,6 +37,24 @@ export class UsersRepository {
       .exec();
   }
 
+  /** By id, including the passwordHash (for verifying a password change). */
+  findByIdWithPassword(id: string): Promise<UserDocument | null> {
+    return this.model.findById(id).select('+passwordHash').exec();
+  }
+
+  updateById(
+    id: string,
+    data: Partial<{
+      name: string;
+      passwordHash: string;
+      avatarPath: string | null;
+    }>,
+  ): Promise<UserDocument | null> {
+    return this.model
+      .findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after' })
+      .exec();
+  }
+
   existsByEmail(email: string): Promise<boolean> {
     return this.model
       .exists({ email: email.toLowerCase() })

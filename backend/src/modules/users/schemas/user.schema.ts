@@ -18,6 +18,10 @@ export class User {
 
   @Prop({ type: String, required: true, enum: Role, default: Role.User })
   role: Role;
+
+  // Relative path under /uploads for the profile picture, or null.
+  @Prop({ type: String, default: null })
+  avatarPath: string | null;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
