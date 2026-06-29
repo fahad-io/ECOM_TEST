@@ -167,7 +167,7 @@ export default function ProductForm({ product }: ProductFormProps) {
   });
 
   return (
-    <Box sx={{ maxWidth: 760, animation: 'fadeUp .35s ease both' }}>
+    <Box sx={{ width: '100%', animation: 'fadeUp .35s ease both' }}>
       <Link
         component="button"
         type="button"
@@ -184,7 +184,7 @@ export default function ProductForm({ product }: ProductFormProps) {
           </Alert>
         )}
 
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '200px 1fr' }, gap: '28px' }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '260px 1fr' }, gap: '36px' }}>
           {/* image dropzone */}
           <Box>
             <Typography sx={{ fontSize: 13, color: '#6B7280', mb: '10px', fontWeight: 600 }}>
