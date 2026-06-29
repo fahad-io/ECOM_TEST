@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/roles.decorator';
-import { OrderStatus } from '../../common/enums/order-status.enum';
 import { Role } from '../../common/enums/role.enum';
 import { AdminOrdersService } from './admin-orders.service';
+import { ListOrdersQueryDto } from './dto/list-orders-query.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 
 @ApiTags('admin/orders')
@@ -14,10 +14,9 @@ export class AdminOrdersController {
   constructor(private readonly orders: AdminOrdersService) {}
 
   @Get()
-  @ApiQuery({ name: 'status', enum: OrderStatus, required: false })
   @ApiOperation({ summary: 'List all orders, optionally filtered by status' })
-  list(@Query('status') status?: OrderStatus) {
-    return this.orders.listAll(status);
+  list(@Query() query: ListOrdersQueryDto) {
+    return this.orders.listAll(query.status);
   }
 
   @Patch(':id/status')
