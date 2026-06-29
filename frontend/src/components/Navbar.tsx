@@ -1,5 +1,6 @@
 'use client';
 
+import type { MouseEvent } from 'react';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Logo from './Logo';
@@ -22,7 +23,8 @@ export interface NavbarProps {
   announcement?: string | null;
   onLogoClick?: () => void;
   onOrders?: () => void;
-  onAccount?: () => void;
+  /** Receives the click event so the consumer can anchor a menu to the link. */
+  onAccount?: (e: MouseEvent<HTMLElement>) => void;
   onCart?: () => void;
 }
 

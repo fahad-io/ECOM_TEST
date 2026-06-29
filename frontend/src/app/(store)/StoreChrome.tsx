@@ -31,20 +31,22 @@ export default function StoreChrome({ children }: { children: React.ReactNode })
   const { data: cart } = useGetCartQuery(undefined, { skip: !isAuthenticated });
   const cartCount = cart?.items.reduce((sum, item) => sum + item.qty, 0) ?? 0;
 
-  const [menuOpen, setMenuOpen] = React.useState(false);
-  const anchorRef = React.useRef<HTMLDivElement | null>(null);
+  // Anchor the account menu to the clicked "Hi, {name}" link so it drops down
+  // directly under the name (not pinned to the viewport edge).
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(anchorEl);
 
   const firstName = user?.name?.split(' ')[0] ?? 'Account';
 
-  const handleAccount = () => {
+  const handleAccount = (e: React.MouseEvent<HTMLElement>) => {
     if (isAuthenticated) {
-      setMenuOpen(true);
+      setAnchorEl(e.currentTarget);
     } else {
       router.push('/login');
     }
   };
 
-  const closeMenu = () => setMenuOpen(false);
+  const closeMenu = () => setAnchorEl(null);
 
   const handleOrders = () => {
     closeMenu();
@@ -60,11 +62,6 @@ export default function StoreChrome({ children }: { children: React.ReactNode })
 
   return (
     <>
-      {/* Anchor for the account menu, pinned to the top-right of the viewport. */}
-      <Box
-        ref={anchorRef}
-        sx={{ position: 'fixed', top: 64, right: 32, width: 0, height: 0, zIndex: 39 }}
-      />
       <Navbar
         cartCount={cartCount}
         accountLabel={isAuthenticated ? `Hi, ${firstName}` : 'Account'}
@@ -80,12 +77,12 @@ export default function StoreChrome({ children }: { children: React.ReactNode })
       />
 
       <Menu
-        anchorEl={anchorRef.current}
+        anchorEl={anchorEl}
         open={menuOpen}
         onClose={closeMenu}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        slotProps={{ paper: { sx: { mt: 1, minWidth: 180, borderRadius: 2 } } }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        slotProps={{ paper: { sx: { mt: 1, minWidth: 200, borderRadius: 2 } } }}
       >
         {user && (
           <Box sx={{ px: 2, py: 1 }}>
