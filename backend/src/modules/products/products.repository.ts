@@ -60,6 +60,13 @@ export class ProductsRepository {
       .exec();
   }
 
+  /** Number of products per category (for the dashboard chart). */
+  countByCategory(): Promise<{ _id: string; count: number }[]> {
+    return this.model
+      .aggregate([{ $group: { _id: '$category', count: { $sum: 1 } } }])
+      .exec();
+  }
+
   findByIds(ids: string[]): Promise<ProductDocument[]> {
     return this.model.find({ _id: { $in: ids } }).exec();
   }

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { CATEGORIES } from '../../common/enums/category.enum';
 import { ORDER_STATUSES, OrderStatus } from '../../common/enums/order-status.enum';
 import { OrdersRepository } from '../orders/orders.repository';
 import { ProductsRepository } from '../products/products.repository';
@@ -19,6 +20,7 @@ export interface DashboardDto {
     revenue: number;
   }[];
   salesOverTime: { month: string; total: number }[];
+  productsByCategory: { category: string; count: number }[];
 }
 
 @Injectable()
@@ -29,7 +31,7 @@ export class DashboardService {
   ) {}
 
   async getDashboard(): Promise<DashboardDto> {
-    const [salesAgg, byStatus, top, byMonth, productCount, lowStockCount] =
+    const [salesAgg, byStatus, top, byMonth, productCount, lowStockCount, byCategory] =
       await Promise.all([
         this.orders.totalSales(),
         this.orders.countByStatus(),
@@ -37,6 +39,7 @@ export class DashboardService {
         this.orders.salesByMonth(),
         this.products.countAll(),
         this.products.countLowStock(LOW_STOCK_THRESHOLD),
+        this.products.countByCategory(),
       ]);
 
     const statusMap = new Map(byStatus.map((s) => [s._id, s.count]));
@@ -46,6 +49,13 @@ export class DashboardService {
       count: statusMap.get(status) ?? 0,
     }));
     const orderCount = ordersByStatus.reduce((sum, s) => sum + s.count, 0);
+
+    // 0-fill every category so the products chart is stable.
+    const categoryMap = new Map(byCategory.map((c) => [c._id, c.count]));
+    const productsByCategory = CATEGORIES.map((category) => ({
+      category,
+      count: categoryMap.get(category) ?? 0,
+    }));
 
     return {
       totalSales: salesAgg[0]?.total ?? 0,
@@ -60,6 +70,7 @@ export class DashboardService {
         revenue: t.revenue,
       })),
       salesOverTime: byMonth.map((m) => ({ month: m._id, total: m.total })),
+      productsByCategory,
     };
   }
 }
