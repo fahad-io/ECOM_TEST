@@ -133,11 +133,14 @@ export default function ProfileForm() {
       component="form"
       onSubmit={onSubmit}
       noValidate
-      sx={{ maxWidth: 560, bgcolor: '#fff', border: '1px solid #ECECEC', borderRadius: '16px', p: '28px' }}
+      sx={{ width: '100%', bgcolor: '#fff', border: '1px solid #ECECEC', borderRadius: '16px', p: { xs: '24px', md: '32px' } }}
     >
       {success && <Alert severity="success" sx={{ mb: '20px', borderRadius: '10px' }}>{success}</Alert>}
       {serverError && <Alert severity="error" sx={{ mb: '20px', borderRadius: '10px' }}>{serverError}</Alert>}
 
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, columnGap: '56px' }}>
+        {/* left column: account details */}
+        <Box>
       {/* avatar */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: '18px', mb: '26px' }}>
         <Box
@@ -208,11 +211,14 @@ export default function ProfileForm() {
         <Typography sx={labelSx}>Name</Typography>
         <TextField fullWidth error={Boolean(errors.name)} helperText={errors.name?.message} sx={fieldSx} {...register('name')} />
       </Box>
-      <Box sx={{ mb: '24px' }}>
+      <Box sx={{ mb: { xs: '24px', md: 0 } }}>
         <Typography sx={labelSx}>Email</Typography>
         <TextField fullWidth value={user?.email ?? ''} disabled sx={fieldSx} />
       </Box>
+        </Box>
 
+        {/* right column: change password */}
+        <Box>
       <Typography sx={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#9CA3AF', mb: '14px' }}>
         Change password
       </Typography>
@@ -220,7 +226,7 @@ export default function ProfileForm() {
         <Typography sx={labelSx}>Current password</Typography>
         <TextField type="password" fullWidth autoComplete="current-password" error={Boolean(errors.currentPassword)} helperText={errors.currentPassword?.message} sx={fieldSx} {...register('currentPassword')} />
       </Box>
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: '14px', mb: '24px' }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: '14px' }}>
         <Box>
           <Typography sx={labelSx}>New password</Typography>
           <TextField type="password" fullWidth autoComplete="new-password" error={Boolean(errors.newPassword)} helperText={errors.newPassword?.message} sx={fieldSx} {...register('newPassword')} />
@@ -230,14 +236,18 @@ export default function ProfileForm() {
           <TextField type="password" fullWidth autoComplete="new-password" error={Boolean(errors.confirmNewPassword)} helperText={errors.confirmNewPassword?.message} sx={fieldSx} {...register('confirmNewPassword')} />
         </Box>
       </Box>
+        </Box>
+      </Box>
 
-      <Button
-        type="submit"
-        disabled={isLoading}
-        sx={{ height: 46, px: '24px', bgcolor: '#111827', color: '#fff', borderRadius: '99px', fontSize: 14, fontWeight: 600, '&:hover': { bgcolor: '#000' } }}
-      >
-        {isLoading ? 'Saving…' : 'Save changes'}
-      </Button>
+      <Box sx={{ mt: '28px', pt: '24px', borderTop: '1px solid #F4F4F2' }}>
+        <Button
+          type="submit"
+          disabled={isLoading}
+          sx={{ height: 46, px: '24px', bgcolor: '#111827', color: '#fff', borderRadius: '99px', fontSize: 14, fontWeight: 600, '&:hover': { bgcolor: '#000' } }}
+        >
+          {isLoading ? 'Saving…' : 'Save changes'}
+        </Button>
+      </Box>
     </Box>
   );
 }
