@@ -15,15 +15,14 @@ export type AdminNavKey = 'dashboard' | 'products' | 'orders';
 export interface AdminConsole {
   nav: AdminNavItem[];
   adminName: string;
-  onViewStore: () => void;
   onSignOut: () => void;
 }
 
 /**
  * Shared admin-console chrome wiring: the sidebar nav items (Dashboard,
- * Products, Orders) with hrefs, the "View store" link, sign-out (clears auth +
- * returns to staff sign-in), and the signed-in admin's display name. Each admin
- * page passes the result to `AdminShell` along with its own `activeKey`.
+ * Products, Orders) with hrefs, sign-out (clears auth + returns to staff
+ * sign-in), and the signed-in admin's display name. Each admin page passes the
+ * result to `AdminShell` along with its own `activeKey`.
  */
 export function useAdminConsole(): AdminConsole {
   const router = useRouter();
@@ -54,10 +53,6 @@ export function useAdminConsole(): AdminConsole {
     [],
   );
 
-  const onViewStore = React.useCallback(() => {
-    window.open('/', '_blank', 'noopener');
-  }, []);
-
   const onSignOut = React.useCallback(() => {
     dispatch(logout());
     router.replace('/admin/login');
@@ -66,7 +61,6 @@ export function useAdminConsole(): AdminConsole {
   return {
     nav,
     adminName: user?.name ?? 'Administrator',
-    onViewStore,
     onSignOut,
   };
 }

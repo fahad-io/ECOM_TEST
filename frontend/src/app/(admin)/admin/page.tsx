@@ -19,7 +19,6 @@ export default function AdminHome() {
         activeKey="dashboard"
         nav={console.nav}
         adminName={console.adminName}
-        onViewStore={console.onViewStore}
         onSignOut={console.onSignOut}
       >
         <DashboardScreen />

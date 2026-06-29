@@ -18,7 +18,6 @@ export default function AdminOrdersPage() {
         activeKey="orders"
         nav={console.nav}
         adminName={console.adminName}
-        onViewStore={console.onViewStore}
         onSignOut={console.onSignOut}
       >
         <OrdersScreen />

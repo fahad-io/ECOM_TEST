@@ -18,7 +18,6 @@ export default function AdminProductsPage() {
         activeKey="products"
         nav={console.nav}
         adminName={console.adminName}
-        onViewStore={console.onViewStore}
         onSignOut={console.onSignOut}
       >
         <ProductsScreen />

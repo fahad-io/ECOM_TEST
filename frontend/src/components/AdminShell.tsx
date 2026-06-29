@@ -4,12 +4,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import SearchIcon from '@mui/icons-material/Search';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Logo from './Logo';
 import { admin, emerald, radii } from '@/theme/tokens';
 import { mono as toMono } from '@/theme/format';
@@ -33,17 +28,13 @@ export interface AdminShellProps {
   /** Admin display name + role (footer of sidebar). */
   adminName?: string;
   adminRole?: string;
-  /** Search field value + handler (topbar). Optional. */
-  search?: string;
-  onSearch?: (value: string) => void;
-  onViewStore?: () => void;
   onSignOut?: () => void;
   children: React.ReactNode;
 }
 
 /**
  * Admin console layout: dark sticky sidebar (brand, nav, user footer) and a
- * light content area with a sticky topbar (title, search, "View store").
+ * light content area with a sticky topbar (page title).
  * Must be rendered inside `AdminThemeProvider` so the dark palette applies to
  * the sidebar; the content area uses an explicit light surface per the mockup.
  */
@@ -53,9 +44,6 @@ export default function AdminShell({
   activeKey,
   adminName = 'Alex Rivera',
   adminRole = 'Administrator',
-  search,
-  onSearch,
-  onViewStore,
   onSignOut,
   children,
 }: AdminShellProps) {
@@ -181,50 +169,6 @@ export default function AdminShell({
           <Typography sx={{ fontSize: 19, fontWeight: 800, letterSpacing: '-0.01em', color: '#111827' }}>
             {title}
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <TextField
-              value={search ?? ''}
-              onChange={(e) => onSearch?.(e.target.value)}
-              placeholder="Search…"
-              aria-label="Search"
-              size="small"
-              sx={{
-                width: 220,
-                '& .MuiOutlinedInput-root': {
-                  height: 40,
-                  borderRadius: `${radii.pill}px`,
-                  bgcolor: '#FAFAF9',
-                  color: '#111827',
-                  '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E5E7EB' },
-                },
-                '& input': { height: 40, fontSize: 13.5 },
-              }}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ fontSize: 18, color: '#9CA3AF' }} />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-            <Button
-              onClick={onViewStore}
-              variant="outlined"
-              endIcon={<OpenInNewIcon sx={{ fontSize: 15 }} />}
-              sx={{
-                height: 40,
-                minHeight: 40,
-                color: '#111827',
-                borderColor: '#E5E7EB',
-                fontSize: 13,
-                '&:hover': { borderColor: '#D1D5DB', bgcolor: 'transparent' },
-              }}
-            >
-              View store
-            </Button>
-          </Box>
         </Box>
         <Box sx={{ p: '30px', color: '#111827' }}>{children}</Box>
       </Box>

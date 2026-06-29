@@ -16,7 +16,6 @@ export default function EditProductChrome({ id }: { id: string }) {
       activeKey="products"
       nav={console.nav}
       adminName={console.adminName}
-      onViewStore={console.onViewStore}
       onSignOut={console.onSignOut}
     >
       <EditProductScreen id={id} />
