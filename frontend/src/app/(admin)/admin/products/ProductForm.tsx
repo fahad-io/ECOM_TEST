@@ -281,7 +281,7 @@ export default function ProductForm({ product }: ProductFormProps) {
               />
             </Box>
 
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: '14px' }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: '14px' }}>
               <Box>
                 <Typography sx={labelSx}>Price ($)</Typography>
                 <TextField
@@ -306,32 +306,43 @@ export default function ProductForm({ product }: ProductFormProps) {
                   {...register('stock')}
                 />
               </Box>
-              <Box>
-                <Typography sx={labelSx}>Category</Typography>
-                <Controller
-                  name="category"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      select
-                      fullWidth
-                      error={Boolean(errors.category)}
-                      helperText={errors.category?.message}
-                      sx={fieldSx}
-                    >
-                      <MenuItem value="" disabled>
-                        Select…
+            </Box>
+
+            <Box>
+              <Typography sx={labelSx}>Category</Typography>
+              <Controller
+                name="category"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    select
+                    fullWidth
+                    error={Boolean(errors.category)}
+                    helperText={errors.category?.message}
+                    sx={fieldSx}
+                    slotProps={{
+                      select: {
+                        displayEmpty: true,
+                        renderValue: (value) =>
+                          value ? (
+                            String(value)
+                          ) : (
+                            <Box component="span" sx={{ color: '#9CA3AF' }}>
+                              Select a category
+                            </Box>
+                          ),
+                      },
+                    }}
+                  >
+                    {PRODUCT_CATEGORIES.map((c) => (
+                      <MenuItem key={c} value={c}>
+                        {c}
                       </MenuItem>
-                      {PRODUCT_CATEGORIES.map((c) => (
-                        <MenuItem key={c} value={c}>
-                          {c}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  )}
-                />
-              </Box>
+                    ))}
+                  </TextField>
+                )}
+              />
             </Box>
 
             <Box sx={{ display: 'flex', gap: '12px', mt: '8px' }}>
