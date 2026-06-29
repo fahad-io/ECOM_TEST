@@ -57,8 +57,23 @@ export const authApi = baseApi.injectEndpoints({
       query: () => ({ url: '/auth/me' }),
       providesTags: ['Auth'],
     }),
+
+    /**
+     * Update the signed-in user's own profile (name / password / avatar) via
+     * multipart `FormData` (PATCH /users/me). No Content-Type is set so the
+     * browser adds the multipart boundary. Returns the updated user.
+     */
+    updateProfile: build.mutation<AuthUser, FormData>({
+      query: (body) => ({ url: '/users/me', method: 'PATCH', body }),
+      invalidatesTags: ['Auth'],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useSignupMutation, useLoginMutation, useGetMeQuery } = authApi;
+export const {
+  useSignupMutation,
+  useLoginMutation,
+  useGetMeQuery,
+  useUpdateProfileMutation,
+} = authApi;

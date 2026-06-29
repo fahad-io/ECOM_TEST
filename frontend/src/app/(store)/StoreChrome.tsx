@@ -13,6 +13,8 @@ import { useAppDispatch } from '@/store/hooks';
 import { useAuth } from '@/store/useAuth';
 import { logout } from '@/store/authSlice';
 import { useGetCartQuery } from '@/store/cartApi';
+import { productImageUrl } from '@/lib/imageUrl';
+import { mono } from '@/theme/format';
 
 /**
  * Client chrome for the storefront group: sticky Navbar above, Footer below.
@@ -37,6 +39,7 @@ export default function StoreChrome({ children }: { children: React.ReactNode })
   const menuOpen = Boolean(anchorEl);
 
   const firstName = user?.name?.split(' ')[0] ?? 'Account';
+  const avatarUrl = productImageUrl(user?.avatarPath);
 
   const handleAccount = (e: React.MouseEvent<HTMLElement>) => {
     if (isAuthenticated) {
@@ -52,6 +55,11 @@ export default function StoreChrome({ children }: { children: React.ReactNode })
     closeMenu();
     if (isAuthenticated) router.push('/orders');
     else router.push('/login?from=%2Forders');
+  };
+
+  const handleProfile = () => {
+    closeMenu();
+    router.push('/account');
   };
 
   const handleLogout = () => {
@@ -81,14 +89,42 @@ export default function StoreChrome({ children }: { children: React.ReactNode })
         slotProps={{ paper: { sx: { mt: 1, minWidth: 200, borderRadius: 2 } } }}
       >
         {user && (
-          <Box sx={{ px: 2, py: 1 }}>
-            <Typography sx={{ fontSize: 14, fontWeight: 700 }}>{user.name}</Typography>
-            <Typography sx={{ fontSize: 12.5, color: 'text.disabled' }}>
-              {user.email}
-            </Typography>
+          <Box sx={{ px: 2, py: 1, display: 'flex', alignItems: 'center', gap: 1.25 }}>
+            <Box
+              aria-hidden
+              sx={{
+                width: 38,
+                height: 38,
+                borderRadius: '99px',
+                flex: '0 0 auto',
+                bgcolor: '#ECFDF5',
+                color: '#047857',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 13,
+                fontWeight: 800,
+                overflow: 'hidden',
+              }}
+            >
+              {avatarUrl ? (
+                <Box component="img" src={avatarUrl} alt="" sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                mono(user.name)
+              )}
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography sx={{ fontSize: 14, fontWeight: 700 }} noWrap>{user.name}</Typography>
+              <Typography sx={{ fontSize: 12.5, color: 'text.disabled' }} noWrap>
+                {user.email}
+              </Typography>
+            </Box>
           </Box>
         )}
         <Divider />
+        <MenuItem onClick={handleProfile} sx={{ fontSize: 14 }}>
+          Profile
+        </MenuItem>
         <MenuItem onClick={handleOrders} sx={{ fontSize: 14 }}>
           Orders
         </MenuItem>

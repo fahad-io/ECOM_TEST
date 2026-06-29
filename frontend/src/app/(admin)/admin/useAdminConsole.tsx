@@ -10,12 +10,19 @@ import type { AdminNavItem } from '@/components/AdminShell';
 import { useAppDispatch } from '@/store/hooks';
 import { useAuth } from '@/store/useAuth';
 import { logout } from '@/store/authSlice';
+import { productImageUrl } from '@/lib/imageUrl';
 
-export type AdminNavKey = 'dashboard' | 'products' | 'orders' | 'customers';
+export type AdminNavKey =
+  | 'dashboard'
+  | 'products'
+  | 'orders'
+  | 'customers'
+  | 'profile';
 
 export interface AdminConsole {
   nav: AdminNavItem[];
   adminName: string;
+  avatarUrl?: string;
   onSignOut: () => void;
 }
 
@@ -68,6 +75,7 @@ export function useAdminConsole(): AdminConsole {
   return {
     nav,
     adminName: user?.name ?? 'Administrator',
+    avatarUrl: productImageUrl(user?.avatarPath),
     onSignOut,
   };
 }

@@ -17,6 +17,7 @@ export default function CustomerDetailChrome({ id }: { id: string }) {
       activeKey="customers"
       nav={console.nav}
       adminName={console.adminName}
+      avatarUrl={console.avatarUrl}
       onSignOut={console.onSignOut}
     >
       <CustomerDetailScreen id={id} />

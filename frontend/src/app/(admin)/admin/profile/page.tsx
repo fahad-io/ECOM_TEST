@@ -2,26 +2,23 @@
 
 import AdminShell from '@/components/AdminShell';
 import RequireAuth from '@/components/RequireAuth';
+import ProfileForm from '@/components/ProfileForm';
 import { useAdminConsole } from '../useAdminConsole';
-import CustomersScreen from './CustomersScreen';
 
-/**
- * Customer management route (`/admin/customers`). Admin-guarded. Lists all
- * customers with their order count + money spent; each row links to a detail.
- */
-export default function AdminCustomersPage() {
+/** Admin profile page (`/admin/profile`). Edit name, password, profile picture. */
+export default function AdminProfilePage() {
   const console = useAdminConsole();
   return (
     <RequireAuth admin>
       <AdminShell
-        title="Customers"
-        activeKey="customers"
+        title="Profile"
+        activeKey="profile"
         nav={console.nav}
         adminName={console.adminName}
         avatarUrl={console.avatarUrl}
         onSignOut={console.onSignOut}
       >
-        <CustomersScreen />
+        <ProfileForm />
       </AdminShell>
     </RequireAuth>
   );

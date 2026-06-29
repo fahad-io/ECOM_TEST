@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import NextLink from 'next/link';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
@@ -28,6 +29,8 @@ export interface AdminShellProps {
   /** Admin display name + role (footer of sidebar). */
   adminName?: string;
   adminRole?: string;
+  /** Profile picture URL shown in the sidebar footer (falls back to initials). */
+  avatarUrl?: string | null;
   onSignOut?: () => void;
   children: React.ReactNode;
 }
@@ -44,6 +47,7 @@ export default function AdminShell({
   activeKey,
   adminName = 'Alex Rivera',
   adminRole = 'Administrator',
+  avatarUrl,
   onSignOut,
   children,
 }: AdminShellProps) {
@@ -117,27 +121,52 @@ export default function AdminShell({
           }}
         >
           <Box
-            aria-hidden
+            component={NextLink}
+            href="/admin/profile"
+            title="Edit your profile"
             sx={{
-              width: 34,
-              height: 34,
-              borderRadius: '99px',
-              bgcolor: emerald.main,
-              color: emerald.deep,
+              flex: 1,
+              minWidth: 0,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 800,
-              fontSize: 13,
+              gap: '11px',
+              textDecoration: 'none',
+              borderRadius: `${radii.sm}px`,
+              p: '6px 8px',
+              m: '-6px -8px',
+              transition: 'background .12s ease',
+              '&:hover': { bgcolor: admin.active },
             }}
           >
-            {initials}
-          </Box>
-          <Box sx={{ flex: 1 }}>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: admin.text }}>
-              {adminName}
-            </Typography>
-            <Typography sx={{ fontSize: 11.5, color: admin.textFaint }}>{adminRole}</Typography>
+            <Box
+              aria-hidden
+              sx={{
+                width: 34,
+                height: 34,
+                borderRadius: '99px',
+                flex: '0 0 auto',
+                bgcolor: emerald.main,
+                color: emerald.deep,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 800,
+                fontSize: 13,
+                overflow: 'hidden',
+              }}
+            >
+              {avatarUrl ? (
+                <Box component="img" src={avatarUrl} alt="" sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                initials
+              )}
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography sx={{ fontSize: 13, fontWeight: 600, color: admin.text }} noWrap>
+                {adminName}
+              </Typography>
+              <Typography sx={{ fontSize: 11.5, color: admin.textFaint }}>{adminRole}</Typography>
+            </Box>
           </Box>
           <Link
             onClick={onSignOut}

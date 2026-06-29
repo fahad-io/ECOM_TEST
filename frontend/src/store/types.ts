@@ -12,6 +12,8 @@ export interface AuthUser {
   name: string;
   email: string;
   role: UserRole;
+  /** Relative `/uploads/...` path for the profile picture, or null. */
+  avatarPath?: string | null;
 }
 
 /**

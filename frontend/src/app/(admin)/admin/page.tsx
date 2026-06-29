@@ -19,6 +19,7 @@ export default function AdminHome() {
         activeKey="dashboard"
         nav={console.nav}
         adminName={console.adminName}
+        avatarUrl={console.avatarUrl}
         onSignOut={console.onSignOut}
       >
         <DashboardScreen />

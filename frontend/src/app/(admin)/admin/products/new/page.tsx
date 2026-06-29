@@ -15,6 +15,7 @@ export default function NewProductPage() {
         activeKey="products"
         nav={console.nav}
         adminName={console.adminName}
+        avatarUrl={console.avatarUrl}
         onSignOut={console.onSignOut}
       >
         <ProductForm />
