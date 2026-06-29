@@ -1,3 +1,4 @@
+import * as dns from 'node:dns';
 import { join } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -8,6 +9,21 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
 async function bootstrap() {
+  // MongoDB Atlas `mongodb+srv://` URIs need a DNS SRV lookup. If the machine's
+  // default resolver refuses SRV queries (querySrv ECONNREFUSED — common behind
+  // a VPN/corporate DNS, even when Compass works via the OS resolver), point
+  // Node at a resolver that answers SRV by setting DNS_SERVERS, e.g.
+  //   DNS_SERVERS=8.8.8.8,1.1.1.1
+  // Must run before any DNS lookup (i.e. before the Mongoose connection).
+  const dnsServers = process.env.DNS_SERVERS?.split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (dnsServers?.length) {
+    dns.setServers(dnsServers);
+    // eslint-disable-next-line no-console
+    console.log(`Using custom DNS servers: ${dnsServers.join(', ')}`);
+  }
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const config = app.get(ConfigService);
 

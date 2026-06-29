@@ -52,6 +52,12 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsString()
   STRIPE_WEBHOOK_SECRET?: string;
+
+  // Optional comma-separated DNS servers (e.g. "8.8.8.8,1.1.1.1") used to
+  // resolve a mongodb+srv:// Atlas URI when the default resolver refuses SRV.
+  @IsOptional()
+  @IsString()
+  DNS_SERVERS?: string;
 }
 
 export function validateEnv(config: Record<string, unknown>) {
