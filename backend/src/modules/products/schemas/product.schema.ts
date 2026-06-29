@@ -8,7 +8,9 @@ export class Product {
   @Prop({ required: true, trim: true })
   name: string;
 
-  @Prop({ required: true, default: '' })
+  // Not `required` — Mongoose treats an empty string as missing, which would
+  // reject products created without a description. Defaults to ''.
+  @Prop({ default: '' })
   description: string;
 
   // USD, whole dollars (matches the design). Stored as a Number.

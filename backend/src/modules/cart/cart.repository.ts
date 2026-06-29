@@ -22,7 +22,7 @@ export class CartRepository {
       .findOneAndUpdate(
         { user },
         { $setOnInsert: { user, items: [] } },
-        { upsert: true, new: true },
+        { upsert: true, returnDocument: 'after' },
       )
       .exec() as Promise<CartDocument>;
   }

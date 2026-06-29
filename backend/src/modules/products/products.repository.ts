@@ -33,6 +33,33 @@ export class ProductsRepository {
     return this.model.findById(id).exec();
   }
 
+  create(data: Partial<Product>): Promise<ProductDocument> {
+    return this.model.create(data);
+  }
+
+  updateById(
+    id: string,
+    data: Partial<Product>,
+  ): Promise<ProductDocument | null> {
+    return this.model
+      .findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after' })
+      .exec();
+  }
+
+  deleteById(id: string): Promise<ProductDocument | null> {
+    return this.model.findByIdAndDelete(id).exec();
+  }
+
+  countAll(): Promise<number> {
+    return this.model.countDocuments().exec();
+  }
+
+  countLowStock(threshold: number): Promise<number> {
+    return this.model
+      .countDocuments({ stock: { $gt: 0, $lte: threshold } })
+      .exec();
+  }
+
   findByIds(ids: string[]): Promise<ProductDocument[]> {
     return this.model.find({ _id: { $in: ids } }).exec();
   }
