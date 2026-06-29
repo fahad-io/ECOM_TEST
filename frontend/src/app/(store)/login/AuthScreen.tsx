@@ -24,6 +24,7 @@ interface FormValues {
   name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 /** Server DTO rules mirrored: name >= 2, valid email, password >= 8. */
@@ -37,6 +38,13 @@ const buildSchema = (isSignup: boolean) =>
       .string()
       .min(8, 'Password must be at least 8 characters')
       .required('Password is required'),
+    // Signup only: must match the password. Client-side only — never sent.
+    confirmPassword: isSignup
+      ? yup
+          .string()
+          .oneOf([yup.ref('password')], 'Passwords do not match')
+          .required('Please re-type your password')
+      : yup.string().notRequired().default(''),
   });
 
 const inputSx = {
@@ -77,7 +85,7 @@ export default function AuthScreen({ mode = 'login' }: AuthScreenProps) {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: yupResolver(buildSchema(isSignup)) as never,
-    defaultValues: { name: '', email: '', password: '' },
+    defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
     mode: 'onTouched',
   });
 
@@ -173,7 +181,7 @@ export default function AuthScreen({ mode = 'login' }: AuthScreenProps) {
           />
         </Box>
 
-        <Box sx={{ mb: '22px' }}>
+        <Box sx={{ mb: isSignup ? 2 : '22px' }}>
           <Typography sx={{ fontSize: 13, color: 'text.secondary', mb: '6px', fontWeight: 500 }}>
             Password
           </Typography>
@@ -187,6 +195,23 @@ export default function AuthScreen({ mode = 'login' }: AuthScreenProps) {
             {...register('password')}
           />
         </Box>
+
+        {isSignup && (
+          <Box sx={{ mb: '22px' }}>
+            <Typography sx={{ fontSize: 13, color: 'text.secondary', mb: '6px', fontWeight: 500 }}>
+              Re-type password
+            </Typography>
+            <TextField
+              type="password"
+              fullWidth
+              autoComplete="new-password"
+              error={Boolean(errors.confirmPassword)}
+              helperText={errors.confirmPassword?.message}
+              sx={inputSx}
+              {...register('confirmPassword')}
+            />
+          </Box>
+        )}
 
         <Button type="submit" size="large" fullWidth disabled={pending}>
           {pending
