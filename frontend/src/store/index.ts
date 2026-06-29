@@ -23,6 +23,20 @@ export type {
   LoginRequest,
   AuthResponse,
 } from './authApi';
+export { useDebounce } from './useDebounce';
+export {
+  productsApi,
+  useGetProductsQuery,
+  useGetProductQuery,
+  PRODUCT_CATEGORIES,
+} from './productsApi';
+export type {
+  Product,
+  ProductSort,
+  ProductCategory,
+  GetProductsParams,
+  Paginated,
+} from './productsApi';
 export type {
   AuthUser,
   UserRole,
