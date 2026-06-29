@@ -36,6 +36,32 @@ export interface Dashboard {
   salesOverTime: DashboardSalesPoint[];
 }
 
+/** A row in the admin customers list (`GET /admin/customers`). */
+export interface CustomerListItem {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+  orderCount: number;
+  totalSpent: number;
+}
+
+/** A customer's profile, aggregate stats, and order history. */
+export interface CustomerDetail {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  createdAt: string;
+  stats: {
+    orderCount: number;
+    totalSpent: number;
+    itemsPurchased: number;
+    lastOrderAt: string | null;
+  };
+  orders: Order[];
+}
+
 /**
  * Fields an admin product create/update form collects. `image` is the optional
  * uploaded file. `sizes` is sent as a comma-separated string (the backend DTO
@@ -158,7 +184,18 @@ export const adminApi = baseApi.injectEndpoints({
         { type: 'Orders', id: 'ADMIN_LIST' },
         { type: 'Orders', id: 'LIST' },
         { type: 'Admin', id: 'DASHBOARD' },
+        { type: 'Admin', id: 'CUSTOMERS' },
       ],
+    }),
+
+    getCustomers: build.query<CustomerListItem[], void>({
+      query: () => ({ url: '/admin/customers' }),
+      providesTags: [{ type: 'Admin', id: 'CUSTOMERS' }],
+    }),
+
+    getCustomer: build.query<CustomerDetail, string>({
+      query: (id) => ({ url: `/admin/customers/${id}` }),
+      providesTags: (_r, _e, id) => [{ type: 'Admin', id: `CUSTOMER-${id}` }],
     }),
   }),
   overrideExisting: false,
@@ -171,4 +208,6 @@ export const {
   useDeleteProductMutation,
   useGetAdminOrdersQuery,
   useUpdateOrderStatusMutation,
+  useGetCustomersQuery,
+  useGetCustomerQuery,
 } = adminApi;

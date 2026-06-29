@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
+import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import type { AdminNavItem } from '@/components/AdminShell';
 import { useAppDispatch } from '@/store/hooks';
 import { useAuth } from '@/store/useAuth';
 import { logout } from '@/store/authSlice';
 
-export type AdminNavKey = 'dashboard' | 'products' | 'orders';
+export type AdminNavKey = 'dashboard' | 'products' | 'orders' | 'customers';
 
 export interface AdminConsole {
   nav: AdminNavItem[];
@@ -48,6 +49,12 @@ export function useAdminConsole(): AdminConsole {
         label: 'Orders',
         icon: <ReceiptLongOutlinedIcon />,
         href: '/admin/orders',
+      },
+      {
+        key: 'customers',
+        label: 'Customers',
+        icon: <PeopleOutlinedIcon />,
+        href: '/admin/customers',
       },
     ],
     [],
