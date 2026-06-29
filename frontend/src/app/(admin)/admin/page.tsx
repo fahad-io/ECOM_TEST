@@ -10,27 +10,30 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import AdminShell from '@/components/AdminShell';
+import RequireAuth from '@/components/RequireAuth';
 
 export default function AdminHome() {
   return (
-    <AdminShell
-      title="Dashboard"
-      activeKey="dashboard"
-      nav={[
-        {
-          key: 'dashboard',
-          label: 'Dashboard',
-          icon: <DashboardOutlinedIcon />,
-          href: '/admin',
-        },
-      ]}
-    >
-      <Box>
-        <Typography sx={{ fontSize: 14, color: '#6B7280' }}>
-          Admin console scaffold. Dashboard, products, and orders are added in
-          later modules.
-        </Typography>
-      </Box>
-    </AdminShell>
+    <RequireAuth admin>
+      <AdminShell
+        title="Dashboard"
+        activeKey="dashboard"
+        nav={[
+          {
+            key: 'dashboard',
+            label: 'Dashboard',
+            icon: <DashboardOutlinedIcon />,
+            href: '/admin',
+          },
+        ]}
+      >
+        <Box>
+          <Typography sx={{ fontSize: 14, color: '#6B7280' }}>
+            Admin console scaffold. Dashboard, products, and orders are added in
+            later modules.
+          </Typography>
+        </Box>
+      </AdminShell>
+    </RequireAuth>
   );
 }
