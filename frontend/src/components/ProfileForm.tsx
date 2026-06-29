@@ -42,6 +42,14 @@ const schema: yup.ObjectSchema<FormValues> = yup.object({
 });
 
 const labelSx = { fontSize: 13, color: '#6B7280', mb: '6px', fontWeight: 500 } as const;
+const sectionSx = {
+  fontSize: 13,
+  fontWeight: 700,
+  letterSpacing: '0.04em',
+  textTransform: 'uppercase',
+  color: '#9CA3AF',
+  mb: '14px',
+} as const;
 
 // Force a light field regardless of theme — this form renders on a white card
 // in both the storefront (light theme) and the admin (dark theme) console.
@@ -138,11 +146,8 @@ export default function ProfileForm() {
       {success && <Alert severity="success" sx={{ mb: '20px', borderRadius: '10px' }}>{success}</Alert>}
       {serverError && <Alert severity="error" sx={{ mb: '20px', borderRadius: '10px' }}>{serverError}</Alert>}
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, columnGap: '56px' }}>
-        {/* left column: account details */}
-        <Box>
-      {/* avatar */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '18px', mb: '26px' }}>
+      {/* avatar — spans the top, divider below */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: '18px', mb: '28px', pb: '26px', borderBottom: '1px solid #F4F4F2' }}>
         <Box
           onClick={() => fileInputRef.current?.click()}
           sx={{
@@ -206,36 +211,38 @@ export default function ProfileForm() {
         </Box>
       </Box>
 
-      {/* name + email */}
-      <Box sx={{ mb: '16px' }}>
-        <Typography sx={labelSx}>Name</Typography>
-        <TextField fullWidth error={Boolean(errors.name)} helperText={errors.name?.message} sx={fieldSx} {...register('name')} />
-      </Box>
-      <Box sx={{ mb: { xs: '24px', md: 0 } }}>
-        <Typography sx={labelSx}>Email</Typography>
-        <TextField fullWidth value={user?.email ?? ''} disabled sx={fieldSx} />
-      </Box>
+      {/* two aligned columns: Account | Change password */}
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, columnGap: '56px', rowGap: '28px', alignItems: 'start' }}>
+        {/* left column: account */}
+        <Box>
+          <Typography sx={sectionSx}>Account</Typography>
+          <Box sx={{ mb: '16px' }}>
+            <Typography sx={labelSx}>Name</Typography>
+            <TextField fullWidth error={Boolean(errors.name)} helperText={errors.name?.message} sx={fieldSx} {...register('name')} />
+          </Box>
+          <Box>
+            <Typography sx={labelSx}>Email</Typography>
+            <TextField fullWidth value={user?.email ?? ''} disabled sx={fieldSx} />
+          </Box>
         </Box>
 
         {/* right column: change password */}
         <Box>
-      <Typography sx={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#9CA3AF', mb: '14px' }}>
-        Change password
-      </Typography>
-      <Box sx={{ mb: '16px' }}>
-        <Typography sx={labelSx}>Current password</Typography>
-        <TextField type="password" fullWidth autoComplete="current-password" error={Boolean(errors.currentPassword)} helperText={errors.currentPassword?.message} sx={fieldSx} {...register('currentPassword')} />
-      </Box>
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: '14px' }}>
-        <Box>
-          <Typography sx={labelSx}>New password</Typography>
-          <TextField type="password" fullWidth autoComplete="new-password" error={Boolean(errors.newPassword)} helperText={errors.newPassword?.message} sx={fieldSx} {...register('newPassword')} />
-        </Box>
-        <Box>
-          <Typography sx={labelSx}>Confirm new password</Typography>
-          <TextField type="password" fullWidth autoComplete="new-password" error={Boolean(errors.confirmNewPassword)} helperText={errors.confirmNewPassword?.message} sx={fieldSx} {...register('confirmNewPassword')} />
-        </Box>
-      </Box>
+          <Typography sx={sectionSx}>Change password</Typography>
+          <Box sx={{ mb: '16px' }}>
+            <Typography sx={labelSx}>Current password</Typography>
+            <TextField type="password" fullWidth autoComplete="current-password" error={Boolean(errors.currentPassword)} helperText={errors.currentPassword?.message} sx={fieldSx} {...register('currentPassword')} />
+          </Box>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: '14px' }}>
+            <Box>
+              <Typography sx={labelSx}>New password</Typography>
+              <TextField type="password" fullWidth autoComplete="new-password" error={Boolean(errors.newPassword)} helperText={errors.newPassword?.message} sx={fieldSx} {...register('newPassword')} />
+            </Box>
+            <Box>
+              <Typography sx={labelSx}>Confirm new password</Typography>
+              <TextField type="password" fullWidth autoComplete="new-password" error={Boolean(errors.confirmNewPassword)} helperText={errors.confirmNewPassword?.message} sx={fieldSx} {...register('confirmNewPassword')} />
+            </Box>
+          </Box>
         </Box>
       </Box>
 
