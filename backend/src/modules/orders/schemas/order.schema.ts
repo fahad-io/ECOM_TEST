@@ -55,6 +55,7 @@ export class Order {
   total: number;
 
   @Prop({
+    type: String,
     required: true,
     enum: OrderStatus,
     default: OrderStatus.Pending,
@@ -68,7 +69,7 @@ export class Order {
   @Prop({ type: String, default: null })
   paymentIntentId: string | null;
 
-  @Prop({ required: true, default: 'mock', enum: ['mock', 'paid'] })
+  @Prop({ type: String, required: true, default: 'mock', enum: ['mock', 'paid'] })
   paymentStatus: 'mock' | 'paid';
 }
 
