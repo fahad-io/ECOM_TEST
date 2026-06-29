@@ -12,11 +12,22 @@
  *
  * Seeded credentials are printed at the end and documented in the README.
  */
+import * as dns from 'node:dns';
 import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
 dotenv.config();
+
+// Same DNS workaround as the app: a mongodb+srv:// Atlas URI needs an SRV
+// lookup, which some resolvers refuse (querySrv ECONNREFUSED). When DNS_SERVERS
+// is set, point Node at a resolver that answers SRV before connecting.
+const dnsServers = process.env.DNS_SERVERS?.split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+if (dnsServers?.length) {
+  dns.setServers(dnsServers);
+}
 
 const MONGO_URI = process.env.MONGO_URI ?? 'mongodb://127.0.0.1:27017/marl';
 const BCRYPT_ROUNDS = 10;
