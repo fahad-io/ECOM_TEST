@@ -29,3 +29,16 @@ export function stockColor(n: number): string {
 export function stockLabel(n: number): string {
   return n <= 0 ? 'Sold out' : n <= 5 ? `Only ${n} left` : 'In stock';
 }
+
+/** Short, human-friendly order id, e.g. `#A1B2C3` from a Mongo ObjectId. */
+export function shortOrderId(id: string): string {
+  return '#' + (id || '').slice(-6).toUpperCase();
+}
+
+/** `Jun 29, 2026` — date label used on order cards / detail. */
+export function orderDate(iso: string): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}

@@ -52,6 +52,23 @@ export type {
   AddItemBody,
   UpdateItemArg,
 } from './cartApi';
+export {
+  checkoutApi,
+  useCreatePaymentIntentMutation,
+} from './checkoutApi';
+export type { PaymentIntentResponse } from './checkoutApi';
+export {
+  ordersApi,
+  useCreateOrderMutation,
+  useGetMyOrdersQuery,
+  useGetOrderQuery,
+} from './ordersApi';
+export type {
+  Order,
+  OrderItem,
+  ShippingAddress,
+  CreateOrderBody,
+} from './ordersApi';
 export type {
   AuthUser,
   UserRole,
