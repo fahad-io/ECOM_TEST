@@ -24,7 +24,7 @@ export default function CustomerDetailScreen({ id }: { id: string }) {
   const { data, isLoading, isError, error, refetch } = useGetCustomerQuery(id);
 
   return (
-    <Box sx={{ maxWidth: 880 }}>
+    <Box sx={{ width: '100%' }}>
       {/* back link */}
       <Box
         component={NextLink}

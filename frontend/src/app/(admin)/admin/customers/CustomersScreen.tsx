@@ -43,7 +43,7 @@ export default function CustomersScreen() {
   }, [customers]);
 
   return (
-    <Box sx={{ maxWidth: 1080 }}>
+    <Box sx={{ width: '100%' }}>
       {/* summary KPIs */}
       <Box
         sx={{
