@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { validateEnv } from './config/env.validation';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
+import { AdminModule } from './modules/admin/admin.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CartModule } from './modules/cart/cart.module';
 import { CheckoutModule } from './modules/checkout/checkout.module';
@@ -31,6 +32,7 @@ import { UsersModule } from './modules/users/users.module';
     CartModule,
     OrdersModule,
     CheckoutModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [
