@@ -154,8 +154,19 @@ export default function ProfileForm() {
         <Box>
           <Button
             type="button"
+            variant="outlined"
             onClick={() => fileInputRef.current?.click()}
-            sx={{ height: 38, px: '16px', border: '1px solid #E5E7EB', color: '#111827', borderRadius: '99px', fontSize: 13.5, fontWeight: 600 }}
+            sx={{
+              height: 38,
+              px: '16px',
+              bgcolor: '#fff',
+              color: '#111827',
+              borderColor: '#E5E7EB',
+              borderRadius: '99px',
+              fontSize: 13.5,
+              fontWeight: 600,
+              '&:hover': { borderColor: '#D1D5DB', bgcolor: '#FAFAF9' },
+            }}
           >
             Change photo
           </Button>
