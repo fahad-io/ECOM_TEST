@@ -42,4 +42,9 @@ export class UsersRepository {
       .exists({ email: email.toLowerCase() })
       .then((doc) => doc !== null);
   }
+
+  /** All customers (role `user`), newest first — for the admin customers list. */
+  findCustomers(): Promise<UserDocument[]> {
+    return this.model.find({ role: Role.User }).sort({ createdAt: -1 }).exec();
+  }
 }

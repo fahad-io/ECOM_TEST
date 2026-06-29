@@ -93,6 +93,35 @@ export class OrdersRepository {
       .exec();
   }
 
+  /**
+   * Per-customer order stats: total order count and money spent (cancelled
+   * orders counted in the count but excluded from spend). For the admin
+   * customers list.
+   */
+  statsByUser(): Promise<
+    { _id: Types.ObjectId; orderCount: number; totalSpent: number }[]
+  > {
+    return this.model
+      .aggregate([
+        {
+          $group: {
+            _id: '$user',
+            orderCount: { $sum: 1 },
+            totalSpent: {
+              $sum: {
+                $cond: [
+                  { $eq: ['$status', OrderStatus.Cancelled] },
+                  0,
+                  '$total',
+                ],
+              },
+            },
+          },
+        },
+      ])
+      .exec();
+  }
+
   /** Revenue grouped by year-month, oldest first (for the sales chart). */
   salesByMonth(): Promise<{ _id: string; total: number }[]> {
     return this.model
