@@ -48,4 +48,29 @@ export class ProductsRepository {
       .limit(limit)
       .exec();
   }
+
+  /**
+   * Atomically decrements stock only if at least `qty` is available. Returns
+   * true if the decrement happened. The {stock: {$gte: qty}} guard makes this a
+   * compare-and-set, safe under concurrent orders without a transaction.
+   */
+  async decrementStockIfAvailable(
+    productId: string,
+    qty: number,
+  ): Promise<boolean> {
+    const res = await this.model
+      .updateOne(
+        { _id: productId, stock: { $gte: qty } },
+        { $inc: { stock: -qty } },
+      )
+      .exec();
+    return res.modifiedCount === 1;
+  }
+
+  /** Compensating increment used to roll back a partially-applied order. */
+  async incrementStock(productId: string, qty: number): Promise<void> {
+    await this.model
+      .updateOne({ _id: productId }, { $inc: { stock: qty } })
+      .exec();
+  }
 }
