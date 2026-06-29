@@ -60,6 +60,19 @@ const schema: yup.ObjectSchema<FormValues> = yup.object({
 const fieldSx = {
   '& .MuiOutlinedInput-root': { borderRadius: '10px', bgcolor: '#fff' },
   '& .MuiOutlinedInput-input': { color: '#111827' },
+  // Match the select's display element to the 46px text-input height (the theme
+  // sizes .MuiOutlinedInput-input but not .MuiSelect-select), so Category lines
+  // up with Name / Price / Stock.
+  '& .MuiSelect-select': {
+    height: 46,
+    minHeight: 46,
+    boxSizing: 'border-box',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 14px',
+    fontSize: 14,
+    color: '#111827',
+  },
 } as const;
 
 const labelSx = { fontSize: 13, color: '#6B7280', mb: '6px', fontWeight: 500 } as const;
