@@ -160,12 +160,7 @@ export default function Catalog() {
       </Box>
 
       <Box component="section" sx={{ ...containerSx, px: 4, pt: 1, pb: '80px' }}>
-        {/* personalized row (auth-only; skipped + hidden for guests) */}
-        <RecommendedForYou onOpen={open} />
-
-        {/* featured carousel */}
-        <FeaturedCarousel products={featured} onOpen={open} />
-
+        {/* filter + product list, on top */}
         <Box
           sx={{
             display: 'grid',
@@ -353,6 +348,14 @@ export default function Catalog() {
               />
             )}
           </Box>
+        </Box>
+
+        <Box sx={{ mt: '72px', pt: '56px', borderTop: '1px solid', borderColor: 'divider' }}>
+          {/* personalized row (auth-only; skipped + hidden for guests) */}
+          <RecommendedForYou onOpen={open} />
+
+          {/* featured / new-in carousel */}
+          <FeaturedCarousel products={featured} onOpen={open} />
         </Box>
       </Box>
     </Box>
