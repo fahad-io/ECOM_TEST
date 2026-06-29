@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { computeTotals } from '../../common/pricing';
 import { CartRepository } from '../cart/cart.repository';
+import { StripeService } from '../checkout/stripe.service';
 import { ProductsRepository } from '../products/products.repository';
 import { ProductDocument } from '../products/schemas/product.schema';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -20,6 +21,7 @@ export class OrdersService {
     private readonly orders: OrdersRepository,
     private readonly carts: CartRepository,
     private readonly products: ProductsRepository,
+    private readonly stripe: StripeService,
   ) {}
 
   /**
@@ -64,7 +66,20 @@ export class OrdersService {
       subtotal += product.price * item.qty;
     }
 
-    // 2) Decrement stock atomically; roll back on any concurrent shortfall.
+    const totals = computeTotals(subtotal);
+
+    // 2) Verify payment BEFORE touching stock (so a failure needs no rollback).
+    //    With Stripe enabled we trust nothing from the client: retrieve the
+    //    intent and require it succeeded, matches the server-computed amount,
+    //    and belongs to this user. Without Stripe keys we record a clearly
+    //    marked mock payment (the assessment's sanctioned no-charge path).
+    const paymentStatus = await this.resolvePaymentStatus(
+      userId,
+      dto.paymentIntentId,
+      totals.total,
+    );
+
+    // 3) Decrement stock atomically; roll back on any concurrent shortfall.
     const applied: { id: string; qty: number }[] = [];
     for (const line of lines) {
       const id = line.product.toString();
@@ -78,8 +93,7 @@ export class OrdersService {
       applied.push({ id, qty: line.qty });
     }
 
-    // 3) Persist the order, then clear the cart.
-    const totals = computeTotals(subtotal);
+    // 4) Persist the order, then clear the cart.
     let order;
     try {
       order = await this.orders.create({
@@ -88,7 +102,7 @@ export class OrdersService {
         ...totals,
         shippingAddress: dto.shippingAddress,
         paymentIntentId: dto.paymentIntentId ?? null,
-        paymentStatus: dto.paymentIntentId ? 'paid' : 'mock',
+        paymentStatus,
       });
     } catch (err) {
       // Don't leave stock decremented if the write failed.
@@ -115,6 +129,39 @@ export class OrdersService {
       throw new ForbiddenException('You do not have access to this order');
     }
     return toOrderDto(order);
+  }
+
+  /**
+   * Determines the trustworthy payment status. The client cannot make an order
+   * 'paid' just by supplying a paymentIntentId string.
+   *  - Stripe disabled (no keys): always 'mock' (sanctioned no-charge path).
+   *  - Stripe enabled + no intent id: 'mock' (no payment was attempted).
+   *  - Stripe enabled + intent id: retrieve it and require succeeded + amount
+   *    matches the server total + belongs to this user; else reject.
+   */
+  private async resolvePaymentStatus(
+    userId: string,
+    paymentIntentId: string | undefined,
+    total: number,
+  ): Promise<'mock' | 'paid'> {
+    if (!this.stripe.enabled || !paymentIntentId) {
+      return 'mock';
+    }
+    const intent = await this.stripe
+      .retrievePaymentIntent(paymentIntentId)
+      .catch(() => null);
+    const expectedAmount = Math.round(total * 100); // Stripe amounts are in cents
+    if (
+      !intent ||
+      intent.status !== 'succeeded' ||
+      intent.amount !== expectedAmount ||
+      (intent.metadata?.userId && intent.metadata.userId !== userId)
+    ) {
+      throw new BadRequestException(
+        'Payment could not be verified. Please complete payment and try again.',
+      );
+    }
+    return 'paid';
   }
 
   private async rollback(applied: { id: string; qty: number }[]): Promise<void> {

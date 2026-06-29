@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CartModule } from '../cart/cart.module';
+import { CheckoutModule } from '../checkout/checkout.module';
 import { ProductsModule } from '../products/products.module';
 import { OrdersController } from './orders.controller';
 import { OrdersRepository } from './orders.repository';
@@ -11,6 +12,7 @@ import { Order, OrderSchema } from './schemas/order.schema';
   imports: [
     MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
     CartModule,
+    CheckoutModule,
     ProductsModule,
   ],
   controllers: [OrdersController],

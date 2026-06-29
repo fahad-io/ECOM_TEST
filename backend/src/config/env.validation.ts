@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  MinLength,
   validateSync,
 } from 'class-validator';
 
@@ -30,7 +31,9 @@ export class EnvironmentVariables {
   @IsString()
   MONGO_URI: string;
 
+  // Require a non-trivial secret so a short/placeholder value fails fast at boot.
   @IsString()
+  @MinLength(32)
   JWT_SECRET: string;
 
   @IsOptional()

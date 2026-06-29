@@ -35,6 +35,7 @@ describe('OrdersService.createFromCart', () => {
     cartItems: ReturnType<typeof cartItem>[] | null;
     products: ReturnType<typeof product>[];
     decrementResults?: boolean[]; // per-call results for decrementStockIfAvailable
+    stripe?: { enabled?: boolean; intent?: unknown }; // for payment verification
   }) {
     const decrementResults = [...(opts.decrementResults ?? [])];
     const carts = {
@@ -69,12 +70,20 @@ describe('OrdersService.createFromCart', () => {
         }),
       ),
     };
+    // Stripe disabled by default -> orders record paymentStatus 'mock'.
+    const stripe = {
+      enabled: opts.stripe?.enabled ?? false,
+      retrievePaymentIntent: jest
+        .fn()
+        .mockResolvedValue(opts.stripe?.intent ?? null),
+    };
     const service = new OrdersService(
       orders as never,
       carts as never,
       products as never,
+      stripe as never,
     );
-    return { service, carts, products, orders };
+    return { service, carts, products, orders, stripe };
   }
 
   it('rejects an empty cart with 400', async () => {
@@ -125,6 +134,58 @@ describe('OrdersService.createFromCart', () => {
     // p1's decrement must be compensated; the order must not be created.
     expect(products.incrementStock).toHaveBeenCalledWith('p1', 1);
     expect(products.incrementStock).toHaveBeenCalledTimes(1);
+    expect(orders.create).not.toHaveBeenCalled();
+  });
+
+  it('records paymentStatus "mock" when Stripe is disabled (even with an intent id)', async () => {
+    const { service, orders } = makeService({
+      cartItems: [cartItem('p1', 1)],
+      products: [product('p1', 40, 10)],
+      stripe: { enabled: false },
+    });
+    const result = await service.createFromCart('u1', {
+      shippingAddress: ADDR,
+      paymentIntentId: 'anything',
+    });
+    expect(result).toBeDefined();
+    expect(orders.create.mock.calls[0][0].paymentStatus).toBe('mock');
+  });
+
+  it('marks "paid" only when Stripe verifies the intent (status + amount)', async () => {
+    // total = 40 (subtotal) + 12 shipping = 52 -> 5200 cents
+    const { service, orders, stripe } = makeService({
+      cartItems: [cartItem('p1', 1)],
+      products: [product('p1', 40, 10)],
+      stripe: {
+        enabled: true,
+        intent: { status: 'succeeded', amount: 5200, metadata: { userId: 'u1' } },
+      },
+    });
+    const result = await service.createFromCart('u1', {
+      shippingAddress: ADDR,
+      paymentIntentId: 'pi_123',
+    });
+    expect(stripe.retrievePaymentIntent).toHaveBeenCalledWith('pi_123');
+    expect(result.total).toBe(52);
+    expect(orders.create.mock.calls[0][0].paymentStatus).toBe('paid');
+  });
+
+  it('rejects (400) and does NOT decrement stock when the intent amount mismatches', async () => {
+    const { service, products, orders } = makeService({
+      cartItems: [cartItem('p1', 1)],
+      products: [product('p1', 40, 10)],
+      stripe: {
+        enabled: true,
+        intent: { status: 'succeeded', amount: 100, metadata: { userId: 'u1' } }, // wrong amount
+      },
+    });
+    await expect(
+      service.createFromCart('u1', {
+        shippingAddress: ADDR,
+        paymentIntentId: 'pi_123',
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(products.decrementStockIfAvailable).not.toHaveBeenCalled();
     expect(orders.create).not.toHaveBeenCalled();
   });
 });

@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CartService } from '../cart/cart.service';
 import { ConfirmPaymentDto } from './dto/confirm-payment.dto';
@@ -35,7 +36,8 @@ export class CheckoutService {
       return {
         mock: true,
         amount,
-        paymentIntentId: `mock_pi_${userId}_${cart.total}`,
+        // Opaque random id — does not encode user/amount.
+        paymentIntentId: `mock_pi_${randomUUID()}`,
         clientSecret: null,
       };
     }
