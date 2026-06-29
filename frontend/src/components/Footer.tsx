@@ -16,10 +16,10 @@ export interface FooterProps {
 }
 
 const DEFAULT_LINKS: FooterLink[] = [
-  { label: 'Shipping' },
-  { label: 'Returns' },
-  { label: 'Sustainability' },
-  { label: 'Contact' },
+  { label: 'Shipping', href: '/shipping' },
+  { label: 'Returns', href: '/returns' },
+  { label: 'Sustainability', href: '/sustainability' },
+  { label: 'Contact', href: '/contact' },
 ];
 
 /**
