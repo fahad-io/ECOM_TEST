@@ -1,5 +1,8 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { getConnectionToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
+import { Connection } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
@@ -16,14 +19,25 @@ describe('MARL API (e2e)', () => {
 
   beforeAll(async () => {
     mongo = await MongoMemoryServer.create();
-    // Set before the module is compiled; ConfigModule reads env at compile time
-    // and dotenv won't override an already-set process.env var.
-    process.env.MONGO_URI = mongo.getUri();
-    process.env.JWT_SECRET = 'test-secret';
+    const uri = mongo.getUri();
+
+    // Override ConfigService so the app binds to THIS in-memory Mongo and a
+    // test secret, regardless of what backend/.env contains. (Setting
+    // process.env alone is not enough — ConfigModule resolves MONGO_URI from
+    // the .env file, which would point the test at the real local database.)
+    const testConfig: Record<string, string> = {
+      MONGO_URI: uri,
+      JWT_SECRET: 'test-secret',
+      JWT_EXPIRES_IN: '7d',
+      CLIENT_URL: 'http://localhost:3000',
+    };
 
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(ConfigService)
+      .useValue({ get: (key: string) => testConfig[key] })
+      .compile();
 
     app = moduleRef.createNestApplication();
     app.setGlobalPrefix('api');
@@ -39,7 +53,12 @@ describe('MARL API (e2e)', () => {
   }, 60_000);
 
   afterAll(async () => {
-    await app?.close();
+    // Drop the ephemeral DB so reruns are deterministic, then tear everything down.
+    if (app) {
+      const conn = app.get<Connection>(getConnectionToken());
+      await conn.dropDatabase().catch(() => undefined);
+      await app.close();
+    }
     await mongo?.stop();
   });
 

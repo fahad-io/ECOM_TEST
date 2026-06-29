@@ -8,7 +8,6 @@
  *
  * Seeded credentials are printed at the end and documented in the README.
  */
-import { randomUUID } from 'crypto';
 import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
 import mongoose from 'mongoose';
