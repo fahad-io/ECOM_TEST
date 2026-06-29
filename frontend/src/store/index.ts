@@ -69,6 +69,23 @@ export type {
   ShippingAddress,
   CreateOrderBody,
 } from './ordersApi';
+export {
+  adminApi,
+  useGetDashboardQuery,
+  useCreateProductMutation,
+  useUpdateProductMutation,
+  useDeleteProductMutation,
+  useGetAdminOrdersQuery,
+  useUpdateOrderStatusMutation,
+} from './adminApi';
+export type {
+  Dashboard,
+  DashboardOrdersByStatus,
+  DashboardTopProduct,
+  DashboardSalesPoint,
+  ProductFormFields,
+  UpdateProductArg,
+} from './adminApi';
 export type {
   AuthUser,
   UserRole,

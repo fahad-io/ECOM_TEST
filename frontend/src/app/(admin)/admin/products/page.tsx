@@ -2,27 +2,26 @@
 
 import AdminShell from '@/components/AdminShell';
 import RequireAuth from '@/components/RequireAuth';
-import { useAdminConsole } from './useAdminConsole';
-import DashboardScreen from './DashboardScreen';
+import { useAdminConsole } from '../useAdminConsole';
+import ProductsScreen from './ProductsScreen';
 
 /**
- * Admin dashboard route (`/admin`). Guarded by `RequireAuth admin` so a regular
- * user never reaches the console. Renders the dark `AdminShell` chrome with the
- * dashboard body.
+ * Product management route (`/admin/products`). Admin-guarded. Table of the
+ * catalog with create / edit / delete actions.
  */
-export default function AdminHome() {
+export default function AdminProductsPage() {
   const console = useAdminConsole();
   return (
     <RequireAuth admin>
       <AdminShell
-        title="Dashboard"
-        activeKey="dashboard"
+        title="Products"
+        activeKey="products"
         nav={console.nav}
         adminName={console.adminName}
         onViewStore={console.onViewStore}
         onSignOut={console.onSignOut}
       >
-        <DashboardScreen />
+        <ProductsScreen />
       </AdminShell>
     </RequireAuth>
   );
