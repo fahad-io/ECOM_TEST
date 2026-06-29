@@ -12,11 +12,19 @@ export class CartRepository {
     return this.model.findOne({ user: new Types.ObjectId(userId) }).exec();
   }
 
-  /** Returns the user's cart, creating an empty one if none exists. */
-  async findOrCreate(userId: string): Promise<CartDocument> {
-    const existing = await this.findByUser(userId);
-    if (existing) return existing;
-    return this.model.create({ user: new Types.ObjectId(userId), items: [] });
+  /**
+   * Returns the user's cart, creating an empty one if none exists. Atomic
+   * upsert so concurrent first-requests can't race into a duplicate-key 409.
+   */
+  findOrCreate(userId: string): Promise<CartDocument> {
+    const user = new Types.ObjectId(userId);
+    return this.model
+      .findOneAndUpdate(
+        { user },
+        { $setOnInsert: { user, items: [] } },
+        { upsert: true, new: true },
+      )
+      .exec() as Promise<CartDocument>;
   }
 
   clear(userId: string): Promise<unknown> {
