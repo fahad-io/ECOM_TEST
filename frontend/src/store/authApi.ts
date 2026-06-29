@@ -32,16 +32,25 @@ export const authApi = baseApi.injectEndpoints({
       query: (body) => ({ url: '/auth/signup', method: 'POST', body }),
       invalidatesTags: ['Auth'],
       async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-        const { data } = await queryFulfilled;
-        dispatch(setCredentials({ token: data.accessToken, user: data.user }));
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setCredentials({ token: data.accessToken, user: data.user }));
+        } catch {
+          // The failure (e.g. 409 duplicate email) is surfaced by the caller's
+          // unwrap(); swallow here so it isn't an unhandled rejection.
+        }
       },
     }),
     login: build.mutation<AuthResponse, LoginRequest>({
       query: (body) => ({ url: '/auth/login', method: 'POST', body }),
       invalidatesTags: ['Auth'],
       async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-        const { data } = await queryFulfilled;
-        dispatch(setCredentials({ token: data.accessToken, user: data.user }));
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setCredentials({ token: data.accessToken, user: data.user }));
+        } catch {
+          // Invalid credentials etc. are surfaced by the caller's unwrap().
+        }
       },
     }),
     getMe: build.query<AuthUser, void>({
