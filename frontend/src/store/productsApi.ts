@@ -94,6 +94,20 @@ export const productsApi = baseApi.injectEndpoints({
             ]
           : [{ type: 'Products' as const, id: `RECS-${id}` }],
     }),
+    /**
+     * Personalized recommendations for the logged-in user (`GET
+     * /recommendations`, auth-only). Callers skip this query when logged out.
+     */
+    getRecommendations: build.query<Product[], void>({
+      query: () => ({ url: '/recommendations' }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map((p) => ({ type: 'Products' as const, id: p.id })),
+              { type: 'Products' as const, id: 'RECS-USER' },
+            ]
+          : [{ type: 'Products' as const, id: 'RECS-USER' }],
+    }),
   }),
   overrideExisting: false,
 });
@@ -102,4 +116,5 @@ export const {
   useGetProductsQuery,
   useGetProductQuery,
   useGetProductRecommendationsQuery,
+  useGetRecommendationsQuery,
 } = productsApi;

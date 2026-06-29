@@ -29,6 +29,7 @@ export {
   useGetProductsQuery,
   useGetProductQuery,
   useGetProductRecommendationsQuery,
+  useGetRecommendationsQuery,
   PRODUCT_CATEGORIES,
 } from './productsApi';
 export type {

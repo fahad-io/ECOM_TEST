@@ -18,6 +18,7 @@ import { useDebounce } from '@/store/useDebounce';
 import { normalizeApiError } from '@/store/normalizeError';
 import FilterSidebar, { PRICE_MAX } from './FilterSidebar';
 import FeaturedCarousel from './FeaturedCarousel';
+import RecommendedForYou from './RecommendedForYou';
 
 const PAGE_SIZE = 6;
 
@@ -159,6 +160,9 @@ export default function Catalog() {
       </Box>
 
       <Box component="section" sx={{ ...containerSx, px: 4, pt: 1, pb: '80px' }}>
+        {/* personalized row (auth-only; skipped + hidden for guests) */}
+        <RecommendedForYou onOpen={open} />
+
         {/* featured carousel */}
         <FeaturedCarousel products={featured} onOpen={open} />
 
