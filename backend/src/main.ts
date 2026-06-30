@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
@@ -29,6 +30,15 @@ async function bootstrap() {
 
   // All routes live under /api.
   app.setGlobalPrefix('api');
+
+  // Secure HTTP headers (X-Content-Type-Options, X-Frame-Options, HSTS, etc.).
+  // crossOriginResourcePolicy is relaxed so the Next.js storefront on another
+  // origin can still load product images served from /uploads.
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
 
   // Allow the Next.js storefront to call us during development.
   app.enableCors({

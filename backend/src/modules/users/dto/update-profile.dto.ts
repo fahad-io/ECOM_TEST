@@ -1,5 +1,9 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import {
+  PASSWORD_REGEX,
+  PASSWORD_RULE_MESSAGE,
+} from '../../../common/validation/password';
 
 export class UpdateProfileDto {
   @ApiPropertyOptional({ example: 'Alex Rivera' })
@@ -14,10 +18,11 @@ export class UpdateProfileDto {
   @IsString()
   currentPassword?: string;
 
-  @ApiPropertyOptional({ minLength: 8 })
+  @ApiPropertyOptional({ minLength: 8, description: PASSWORD_RULE_MESSAGE })
   @IsOptional()
   @IsString()
   @MinLength(8)
   @MaxLength(72)
+  @Matches(PASSWORD_REGEX, { message: PASSWORD_RULE_MESSAGE })
   newPassword?: string;
 }

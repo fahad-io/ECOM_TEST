@@ -16,6 +16,7 @@ import { useAuth } from '@/store/useAuth';
 import { setCredentials } from '@/store/authSlice';
 import { normalizeApiError } from '@/store/normalizeError';
 import { productImageUrl } from '@/lib/imageUrl';
+import { PASSWORD_REGEX, PASSWORD_RULE_MESSAGE } from '@/lib/passwordPolicy';
 import { mono } from '@/theme/format';
 
 interface FormValues {
@@ -30,7 +31,8 @@ const schema: yup.ObjectSchema<FormValues> = yup.object({
   newPassword: yup
     .string()
     .default('')
-    .test('len', 'Password must be at least 8 characters', (v) => !v || v.length >= 8),
+    .test('len', 'Password must be at least 8 characters', (v) => !v || v.length >= 8)
+    .test('complexity', PASSWORD_RULE_MESSAGE, (v) => !v || PASSWORD_REGEX.test(v)),
   currentPassword: yup.string().default('').when('newPassword', {
     is: (v: string) => Boolean(v),
     then: (s) => s.required('Enter your current password'),

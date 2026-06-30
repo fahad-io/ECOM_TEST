@@ -75,7 +75,7 @@ describe('MARL API (e2e)', () => {
   it('signs up, returns a token, and resolves /auth/me', async () => {
     const signup = await http()
       .post('/api/auth/signup')
-      .send({ name: 'Test User', email: 'test@e2e.dev', password: 'secret123' })
+      .send({ name: 'Test User', email: 'test@e2e.dev', password: 'Secret123!' })
       .expect(201);
     expect(signup.body.accessToken).toBeDefined();
     expect(signup.body.user).not.toHaveProperty('passwordHash');
@@ -96,10 +96,17 @@ describe('MARL API (e2e)', () => {
       .expect(400);
   });
 
+  it('rejects a password missing a special character (400)', async () => {
+    await http()
+      .post('/api/auth/signup')
+      .send({ name: 'Weak Pass', email: 'weak@e2e.dev', password: 'password123' })
+      .expect(400);
+  });
+
   it('blocks a normal user from an admin route (403)', async () => {
     const signup = await http()
       .post('/api/auth/signup')
-      .send({ name: 'Plain User', email: 'plain@e2e.dev', password: 'secret123' })
+      .send({ name: 'Plain User', email: 'plain@e2e.dev', password: 'Secret123!' })
       .expect(201);
     const token = signup.body.accessToken as string;
 

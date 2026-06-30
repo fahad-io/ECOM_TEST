@@ -19,6 +19,11 @@ import {
   type AuthResponse,
 } from '@/store/authApi';
 import { normalizeApiError } from '@/store/normalizeError';
+import {
+  PASSWORD_MIN_MESSAGE,
+  PASSWORD_REGEX,
+  PASSWORD_RULE_MESSAGE,
+} from '@/lib/passwordPolicy';
 
 interface FormValues {
   name: string;
@@ -27,17 +32,28 @@ interface FormValues {
   confirmPassword: string;
 }
 
-/** Server DTO rules mirrored: name >= 2, valid email, password >= 8. */
+/**
+ * Server DTO rules mirrored: name >= 2, valid email, password >= 8. On signup
+ * the password must also include a letter, a number, and a special character
+ * (matched server-side too). Login stays length-only so existing accounts and
+ * the seeded admin can still sign in.
+ */
 const buildSchema = (isSignup: boolean) =>
   yup.object({
     name: isSignup
       ? yup.string().trim().min(2, 'Name must be at least 2 characters').required('Name is required')
       : yup.string().notRequired().default(''),
     email: yup.string().email('Enter a valid email').required('Email is required'),
-    password: yup
-      .string()
-      .min(8, 'Password must be at least 8 characters')
-      .required('Password is required'),
+    password: isSignup
+      ? yup
+          .string()
+          .min(8, PASSWORD_MIN_MESSAGE)
+          .matches(PASSWORD_REGEX, PASSWORD_RULE_MESSAGE)
+          .required('Password is required')
+      : yup
+          .string()
+          .min(8, PASSWORD_MIN_MESSAGE)
+          .required('Password is required'),
     // Signup only: must match the password. Client-side only — never sent.
     confirmPassword: isSignup
       ? yup
@@ -190,7 +206,12 @@ export default function AuthScreen({ mode = 'login' }: AuthScreenProps) {
             fullWidth
             autoComplete={isSignup ? 'new-password' : 'current-password'}
             error={Boolean(errors.password)}
-            helperText={errors.password?.message}
+            helperText={
+              errors.password?.message ??
+              (isSignup
+                ? '8+ characters, with a letter, a number, and a special character.'
+                : undefined)
+            }
             sx={inputSx}
             {...register('password')}
           />
